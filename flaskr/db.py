@@ -1,4 +1,5 @@
 import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 
 import click
 from flask import current_app, g

@@ -5,7 +5,7 @@ from flask import (
 	request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from fflaskr.db import get_db
+from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -34,7 +34,7 @@ def register():
 			db.commit()
 			return redirect(url_for('auth.login'))
 		flash(error)
-	return render_template('auth/register.html')
+	return render_template('register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -59,7 +59,7 @@ def login():
 
 		flash(error)
 
-	return render_template('auth/login.html')
+	return render_template('login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -76,3 +76,11 @@ def load_logged_in_user():
 def logout():
 	session.clear()
 	redirect(url_for('index'))
+
+def loginn_required(view):
+	@functools.wraps(view)
+	def wrapper_view(**kwargs):
+		if	g.user is None:
+			return redirect(url_for('auth.login'))
+		return view(**kwargs)
+	return wrapper_view
